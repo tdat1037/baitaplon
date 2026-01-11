@@ -1,0 +1,87 @@
+USE QL_BanHang;
+GO
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) NOT NULL UNIQUE,
+    Password NVARCHAR(255) NOT NULL,
+    Role NVARCHAR(20) NOT NULL, -- 'QuanLy' / 'NhanVien'
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE()
+);
+INSERT INTO Users(Username, Password, Role)
+VALUES (N'admin', N'123456', N'QuanLy');
+GO
+drop table Users;
+select * from Users;
+use QL_BanHang;
+go
+CREATE TABLE Products (
+    Id INT IDENTITY PRIMARY KEY,
+    Ma NVARCHAR(20) NOT NULL UNIQUE,
+    Ten NVARCHAR(100) NOT NULL,
+    Donvi NVARCHAR(20) NOT NULL,
+    Giaban DECIMAL(18,0) NOT NULL,
+    Tonkho INT NOT NULL DEFAULT 0
+);
+drop table Products;
+select * from Products;select * from Users;
+USE QL_BanHang;
+
+IF OBJECT_ID('dbo.Products','U') IS NOT NULL
+    DROP TABLE dbo.Products;
+
+CREATE TABLE Products (
+    Id INT IDENTITY PRIMARY KEY,
+    Ma NVARCHAR(20) NOT NULL UNIQUE,
+    Ten NVARCHAR(100) NOT NULL,
+    Donvi NVARCHAR(20) NOT NULL,
+    Giaban DECIMAL(18,0) NOT NULL,
+    Tonkho INT NOT NULL DEFAULT 0
+);
+
+SELECT COUNT(*) FROM dbo.Products;
+
+SELECT DB_NAME() AS TenDB;
+SELECT COUNT(*) AS TongDong FROM Products;
+SELECT * FROM Products;
+CREATE TABLE PhieuNhap (
+    MaPN INT IDENTITY(1,1) PRIMARY KEY,
+    NgayNhap DATETIME NOT NULL DEFAULT GETDATE(),
+    MaNCC INT NOT NULL,
+    GhiChu NVARCHAR(255) NULL,
+    TongTien DECIMAL(18,2) NOT NULL DEFAULT 0
+);
+CREATE TABLE ChiTietPhieuNhap (
+    MaCT INT IDENTITY(1,1) PRIMARY KEY,
+    MaPN INT NOT NULL,
+    MaSP INT NOT NULL,
+    SoLuong INT NOT NULL,
+    DonGia DECIMAL(18,2) NOT NULL,
+    ThanhTien AS (SoLuong * DonGia) PERSISTED,
+
+    CONSTRAINT FK_CTPN_PN FOREIGN KEY(MaPN) REFERENCES PhieuNhap(MaPN)
+);
+select * from ChiTietPhieuNhap;select * from PhieuNhap;
+CREATE TABLE NhaCungCap (
+        MaNCC INT IDENTITY(1,1) PRIMARY KEY,
+        TenNCC NVARCHAR(100) NOT NULL,
+        SDT NVARCHAR(20) NULL,
+        DiaChi NVARCHAR(200) NULL,
+        GhiChu NVARCHAR(255) NULL
+    );
+	INSERT INTO NhaCungCap (TenNCC, SDT, DiaChi, GhiChu)
+VALUES
+(N'Mart', N'0900000001', N'Quận 1', N''),
+(N'Rau sạch ABC', N'0900000002', N'Quận 3', N''),
+(N'Nông trại Xanh', N'0900000003', N'Thủ Đức', N'');
+GO
+SELECT * FROM NhaCungCap;
+SELECT * FROM Products;
+SELECT TOP 1 * FROM Products;
+
+SELECT DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='ChiTietPhieuNhap' AND COLUMN_NAME='MaSP';
+ALTER TABLE ChiTietPhieuNhap
+ALTER COLUMN MaSP NVARCHAR(20) NOT NULL;
+
